@@ -17,15 +17,20 @@
 int execute_shellcmd(SHELLCMD *t)
 {
     int  exitstatus;
+    
 
     if(t == NULL) {			// hmmmm, that's a problem
 	exitstatus	= EXIT_FAILURE;
     }
     else {				// normal, exit commands
-        pid_t  pid = fork();;
+        pid_t  pid = fork();
         switch (pid){
             case 0 : // child process
-                execv((*t).argv[0], (*t).argv);
+                execv(t->argv[0], t->argv); // attempt to start process
+                
+                // If execv failed, and process image did not change
+                fprintf(stderr, "%s is not a valid command\n", t->argv[0]);
+                exit(EXIT_FAILURE);
                 break;
             case -1 : //fork failed
                 exitstatus	= EXIT_FAILURE;
@@ -33,10 +38,10 @@ int execute_shellcmd(SHELLCMD *t)
             default : // parent process
                 wait( &exitstatus ); //exit status is written once child terminates
                 // CAN PRINT THE EXIT CODE HERE
-                printf("The exit status was %i\n", exitstatus);
                 break;
+            }
         }
-    }
-
+        
+    printf("The exit status was %i\n", exitstatus);
     return exitstatus;
 }
