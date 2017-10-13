@@ -1,2 +1,3 @@
 # CITS2002Project2
-CITS2002Project2Repo
+
+Project 2 for CITS2002 2017 Semester 2
