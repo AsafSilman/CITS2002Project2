@@ -1,5 +1,6 @@
 #include "myshell.h"
-
+#include <sys/wait.h>
+#include <sys/types.h>
 /*
    CITS2002 Project 2 2017
    Name(s):		student-name1 (, student-name2)
@@ -21,7 +22,20 @@ int execute_shellcmd(SHELLCMD *t)
 	exitstatus	= EXIT_FAILURE;
     }
     else {				// normal, exit commands
-	exitstatus	= EXIT_SUCCESS;
+        pid_t  pid = fork();;
+        switch (pid){
+            case 0 : // child process
+                execv((*t).argv[0], (*t).argv);
+                break;
+            case -1 : //fork failed
+                exitstatus	= EXIT_FAILURE;
+                break;
+            default : // parent process
+                wait( &exitstatus ); //exit status is written once child terminates
+                // CAN PRINT THE EXIT CODE HERE
+                printf("The exit status was %i\n", exitstatus);
+                break;
+        }
     }
 
     return exitstatus;
