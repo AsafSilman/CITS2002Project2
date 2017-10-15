@@ -1,5 +1,5 @@
 myshell: parser.o execute.o	globals.o myshell.h
-	cc -std=c99 -Wall -Werror -pedantic -o myshell myshell.c parser.o execute.o globals.o myshell.h
+	cc -std=c99 -Wall -Werror -pedantic -o myshell myshell.c parser.o execute.o globals.o
 
 parser.o: parser.c myshell.h
 	cc -std=c99 -Wall -Werror -pedantic -c -o parser.o parser.c
