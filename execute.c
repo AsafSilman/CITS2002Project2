@@ -52,6 +52,16 @@ int execute_shellcmd(SHELLCMD *t)
         printf("\n");
         exit(EXIT_SUCCESS);
     }
+    else if(strcmp(*t->argv, "cd") == 0){
+        // If first argument is 'exit', strcmp returns 0
+        printf("Argument was cd.\n");
+        exit(EXIT_SUCCESS);
+    }
+    else if(strcmp(*t->argv, "time") == 0){
+        // If first argument is 'exit', strcmp returns 0
+        printf("Argument was time.\n");
+        exit(EXIT_SUCCESS);
+    }
     else {				// normal, exit commands
         pid_t  pid = fork();
         switch (pid){
