@@ -30,7 +30,7 @@ void runfrompath(char **argv)
     while(token != NULL)
     {
         strcpy(command_buffer, token);
-        strcat(command_buffer, command)
+        strcat(command_buffer, command);
         execv(command_buffer, argv); //if this works, the process image is replaced. execution of loop will stop
 
         token = strtok(NULL, s);
@@ -46,6 +46,11 @@ int execute_shellcmd(SHELLCMD *t)
 
     if(t == NULL) {			// hmmmm, that's a problem
 	exitstatus	= EXIT_FAILURE;
+    }
+    else if(strcmp(*t->argv, "exit") == 0){
+        // If first argument is 'exit', strcmp returns 0
+        printf("\n");
+        exit(EXIT_SUCCESS);
     }
     else {				// normal, exit commands
         pid_t  pid = fork();
