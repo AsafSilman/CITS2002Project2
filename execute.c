@@ -82,11 +82,6 @@ int execute_shellcmd(SHELLCMD *t)
         }
         exitstatus = 0;
     }
-    else if(strcmp(*t->argv, "time") == 0){
-        // If first argument is 'exit', strcmp returns 0
-        printf("Argument was time.\n");
-        exit(EXIT_SUCCESS);
-    }
     else {				// normal, exit commands
         execute_cmd(&exitstatus, t);
     }
