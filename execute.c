@@ -14,30 +14,7 @@
 
 //LOCAL DEFINITIONS
 void execute_cmd(int*, SHELLCMD*);
-
-void runfrompath(char **argv)
-{
-    char *path_p = getenv("PATH");
-    const char s[2] = ":"; //seperator
-    char *token;
-    char command_buffer[256]; // Buffer to hold command //TODO link to sys limits or something
-
-    char *command = calloc(strlen(argv[0])+2, sizeof(char));
-    strcat(command, "/"); 
-    strcat(command, argv[0]); 
-
-    token = strtok(path_p, s);
-    // iterate through PATH variable
-    while(token != NULL)
-    {
-        strcpy(command_buffer, token);
-        strcat(command_buffer, command);
-        execv(command_buffer, argv); //if this works, the process image is replaced. execution of loop will stop
-        token = strtok(NULL, s);
-    }
-
-    free(command);
-}
+void runfrompath(char**);
 
 int execute_shellcmd(SHELLCMD *t)
 {
@@ -116,4 +93,28 @@ void execute_cmd(int *exitstatus, SHELLCMD *t){
             // CAN PRINT THE EXIT CODE HERE
             break;
     }
+}
+
+void runfrompath(char **argv)
+{
+    char *path_p = getenv("PATH");
+    const char s[2] = ":"; //seperator
+    char *token;
+    char command_buffer[256]; // Buffer to hold command //TODO link to sys limits or something
+
+    char *command = calloc(strlen(argv[0])+2, sizeof(char));
+    strcat(command, "/"); 
+    strcat(command, argv[0]); 
+
+    token = strtok(path_p, s);
+    // iterate through PATH variable
+    while(token != NULL)
+    {
+        strcpy(command_buffer, token);
+        strcat(command_buffer, command);
+        execv(command_buffer, argv); //if this works, the process image is replaced. execution of loop will stop
+        token = strtok(NULL, s);
+    }
+
+    free(command);
 }
