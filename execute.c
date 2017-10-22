@@ -20,7 +20,7 @@ void runfrompath(char **argv)
     char *path_p = getenv("PATH");
     const char s[2] = ":"; //seperator
     char *token;
-    char command_buffer[256]; // Buffer to hold command
+    char command_buffer[256]; // Buffer to hold command //TODO link to sys limits or something
 
     char *command = calloc(strlen(argv[0])+2, sizeof(char));
     strcat(command, "/"); 
