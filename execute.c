@@ -65,13 +65,14 @@ int execute_shellcmd(SHELLCMD *t)
         struct timeval  start_time;
         struct timeval  end_time;
         
-        (t->argv)++; // increment argv by 1
         (t->argc)--; // decrement argc by 1
+        (t->argv)++; // increment argv by 1
 
         gettimeofday( &start_time, NULL );
         execute_cmd( &exitstatus, t );
-        (t->argv)--; // increment argv by 1        
         gettimeofday( &end_time, NULL );
+        
+        (t->argv)--; // decrement argv by 1 [Used to free cmd]
 
         if (exitstatus == 0){ // 
             int execution_time = end_time.tv_usec - start_time.tv_usec;
