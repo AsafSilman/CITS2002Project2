@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <sys/time.h>
 
 //  Written by Chris.McDonald@uwa.edu.au, October 2017
 
