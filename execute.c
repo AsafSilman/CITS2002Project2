@@ -85,7 +85,6 @@ int execute_shellcmd(SHELLCMD *t)
             int execution_time = end_time.tv_usec - start_time.tv_usec;
             fprintf(stderr, "%i ms\n", execution_time/1000); // convert to milliseconds
         }
-        exitstatus = 0;
     }
     else {				// normal, exit commands
         execute_cmd(&exitstatus, t);
