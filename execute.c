@@ -39,6 +39,11 @@ void runfrompath(char **argv)
     free(command);
 }
 
+int execute_cd(char **path)
+{
+    return 0;
+}
+
 int execute_shellcmd(SHELLCMD *t)
 {
     int  exitstatus;
@@ -53,12 +58,19 @@ int execute_shellcmd(SHELLCMD *t)
         exit(EXIT_SUCCESS);
     }
     else if(strcmp(*t->argv, "cd") == 0){
-        // If first argument is 'exit', strcmp returns 0
-        printf("Argument was cd.\n");
-        exit(EXIT_SUCCESS);
+        // If first argument is 'cd', strcmp returns 0
+        if(t->argc==1)
+        {
+            chdir(HOME);
+        }
+        else
+        {
+            chdir(t->argv[1]);
+        }
+        exitstatus = 0;
     }
     else if(strcmp(*t->argv, "time") == 0){
-        // If first argument is 'exit', strcmp returns 0
+        // If first argument is 'time', strcmp returns 0
         printf("Argument was time.\n");
         exit(EXIT_SUCCESS);
     }
