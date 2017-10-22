@@ -23,6 +23,7 @@ int execute_shellcmd(SHELLCMD *t)
     if(t == NULL) {			// hmmmm, that's a problem
 	exitstatus	= EXIT_FAILURE;
     }
+    // Maybe have a switch statement here for different SHELL commands
     else if(strcmp(t->argv[0], "exit") == 0){
         // If first argument is 'exit', strcmp returns 0
         printf("\n");
@@ -63,7 +64,8 @@ int execute_shellcmd(SHELLCMD *t)
             fprintf(stderr, "%i ms\n", execution_time/1000); // convert to milliseconds
         }
     }
-    else {				// normal, exit commands
+    else {
+        // Sequential Execution here?
         execute_cmd(&exitstatus, t);
     }
     return exitstatus;
