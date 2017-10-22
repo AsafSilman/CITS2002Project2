@@ -51,15 +51,27 @@ int execute_shellcmd(SHELLCMD *t)
         printf("\n");
         exit(EXIT_SUCCESS);
     }
-    else if(strcmp(*t->argv, "cd") == 0){
-        // If first argument is 'cd', strcmp returns 0
-        if(t->argc==1)
-        {
-            chdir(HOME);
-        }
-        else
-        {
-            chdir(t->argv[1]);
+    else if(strcmp(t->argv[0], "cd") == 0){
+        // If first argument is 'exit', strcmp returns 0
+        printf("Argument was cd.\n");
+        exit(EXIT_SUCCESS);
+    }
+    else if(strcmp(t->argv[0], "time") == 0){
+        // If first argument is 'exit', strcmp returns 0    
+        struct timeval  start_time;
+        struct timeval  end_time;
+        
+        (t->argv)++; // increment argv by 1
+        (t->argc)--; // decrement argc by 1
+
+        gettimeofday( &start_time, NULL );
+        execute_cmd( &exitstatus, t );
+        (t->argv)--; // increment argv by 1        
+        gettimeofday( &end_time, NULL );
+
+        if (exitstatus == 0){ // 
+            int execution_time = end_time.tv_usec - start_time.tv_usec;
+            fprintf(stderr, "%i ms\n", execution_time/1000 ); // convert to milliseconds
         }
         exitstatus = 0;
     }
