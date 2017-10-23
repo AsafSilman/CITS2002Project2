@@ -27,7 +27,6 @@ int execute_shellcmd(SHELLCMD *t)
         case CMD_PIPE      : break;
         case CMD_BACKGROUND: break;
     }
-    printf("Exit status was %i\n", exitstatus);
     return exitstatus;   
 }
 
