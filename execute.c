@@ -68,17 +68,22 @@ int execute_shellcmd(SHELLCMD *t)
         struct timeval  start_time;
         struct timeval  end_time;
         
+        // Case if time has no arguments
+        if (t->argc == 1){
+            return EXIT_SUCCESS;
+        }
+
         (t->argv)++; // increment argv by 1
         (t->argc)--; // decrement argc by 1
 
         gettimeofday( &start_time, NULL );
-        execute_cmd( &exitstatus, t );
+        exitstatus = execute_shellcmd(t);
         (t->argv)--; // increment argv by 1        
         gettimeofday( &end_time, NULL );
 
         if (exitstatus == 0){ // 
             int execution_time = end_time.tv_usec - start_time.tv_usec;
-            fprintf(stderr, "%i ms\n", execution_time/1000 ); // convert to milliseconds
+            fprintf(stderr, "%i ms\n", execution_time/1000); // convert to milliseconds
         }
         exitstatus = 0;
     }
