@@ -1,6 +1,5 @@
 #include "myshell.h"
-#include <sys/wait.h>
-#include <sys/types.h>
+
 /*
    CITS2002 Project 2 2017
    Name(s):		student-name1 (, student-name2)
