@@ -19,15 +19,15 @@ int execute_shellcmd(SHELLCMD *t)
     }
 
     switch (t->type){
-        case CMD_COMMAND : execute_cmd_command(t, &exitstatus); break;
+        case CMD_COMMAND   : execute_cmd_command(t, &exitstatus); break;
         case CMD_SEMICOLON : execute_semicolon_command(t, &exitstatus); break;
-        case CMD_AND: break;
-        case CMD_OR: break;
-        case CMD_SUBSHELL: break;
-        case CMD_PIPE: break;
+        case CMD_AND       : execute_and_command(t, &exitstatus); break;
+        case CMD_OR        : execute_or_command(t, &exitstatus); break;
+        case CMD_SUBSHELL  : break;
+        case CMD_PIPE      : break;
         case CMD_BACKGROUND: break;
     }
-
+    printf("Exit status was %i\n", exitstatus);
     return exitstatus;   
 }
 

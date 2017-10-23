@@ -50,6 +50,32 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
     }
 }
 
-void execute_semicolon_command(SHELLCMD *t, int *exitstatus){
+void execute_semicolon_command(SHELLCMD *t, int *exitstatus)
+{
+    execute_shellcmd(t->left);
+    *exitstatus = execute_shellcmd(t->right); // Project Requirement [Step 4]
+}
 
+void execute_and_command(SHELLCMD *t, int *exitstatus)
+{
+    int last_exit;
+    last_exit = execute_shellcmd(t->left);
+    if (last_exit != 0) {
+        *exitstatus = last_exit;
+        return;
+    }
+
+    *exitstatus = execute_shellcmd(t->right);
+}
+
+void execute_or_command(SHELLCMD *t, int *exitstatus)
+{
+    int last_exit;
+    last_exit = execute_shellcmd(t->left);
+    if (last_exit == 0) {
+        *exitstatus = last_exit;
+        return;
+    }
+
+    *exitstatus = execute_shellcmd(t->right);
 }
