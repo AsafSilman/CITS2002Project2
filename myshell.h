@@ -99,3 +99,14 @@ extern	void check_allocation0(void *p, char *file, const char *func, int line);
 	print_shellcmd0(t)
 extern	void print_shellcmd0(SHELLCMD *t);
 
+//  ----------------------------------------------------------------------
+
+// Project Functions
+
+extern void execute_cmd_command(SHELLCMD*, int*);
+extern void execute_semicolon_command(SHELLCMD*, int*);
+extern void execute_and_command(SHELLCMD*, int*);
+extern void execute_or_command(SHELLCMD*, int*);
+extern void execute_subshell_command(SHELLCMD*, int*);
+extern void execute_pipe_command(SHELLCMD*, int*);
+extern void execute_background_command(SHELLCMD*, int*);
