@@ -1,3 +1,1 @@
-# CITS2002Project2
-
-Project 2 for CITS2002 2017 Semester 2
+# This is not a project for you to look at
