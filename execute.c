@@ -113,3 +113,8 @@ void execute_cmd(int *exitstatus, SHELLCMD *t){
             break;
     }
 }
+
+void sequential_cmd()
+{
+    int t = 0;
+}
