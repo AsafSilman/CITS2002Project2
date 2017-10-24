@@ -24,7 +24,8 @@ void run_cmd(int *exitstatus, SHELLCMD *t)
         default : // parent process
             wait( exitstatus ); //exit status is written once child terminates
             // CAN PRINT THE EXIT CODE HERE
-            break;
+            *exitstatus=  WEXITSTATUS(*exitstatus);
+			break;
     }
 }
 
