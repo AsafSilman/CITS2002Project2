@@ -1,11 +1,22 @@
 #include "myshell.h"
 #include "util.h"
 
+#define FILE_ACCESS 0600
+
 void run_cmd(int *exitstatus, SHELLCMD *t)
 {
+
     pid_t  pid = fork();
     switch (pid){
         case 0 : // child process
+            if (t->infile != NULL) {
+                execute_infile(t);
+            }
+    
+            if (t->outfile != NULL) {
+                execute_outfile(t);
+            }
+    
             if (t->argv[0][0] == '/'){
                 // Path Given
                 execv(t->argv[0], t->argv); // attempt to start process
@@ -52,3 +63,18 @@ void runfrompath(char **argv)
     free(command);
 }
 
+void execute_infile(SHELLCMD *t)
+{
+    int ifd = open(t->infile, O_RDONLY);
+    dup2(ifd, STDIN_FILENO);
+    close(ifd);
+}
+
+void execute_outfile(SHELLCMD *t)
+{
+
+    int out = open(t->outfile, O_RDWR|O_CREAT, FILE_ACCESS);
+    dup2(out, STDOUT_FILENO);
+    fflush(stdout); 
+    close(out);
+}

@@ -3,6 +3,7 @@
 
 void execute_cmd_command(SHELLCMD *t, int *exitstatus)
 {
+
     // INTERNAL COMMANDS
     if(strcmp(t->argv[0], "exit") == 0){
         // If first argument is 'exit', strcmp returns 0
@@ -27,9 +28,8 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
         // Case if time has no arguments
         if (t->argc == 1){
             *exitstatus = EXIT_SUCCESS;
-            return;
         }
-
+        else {
         (t->argv)++; // increment argv by 1
         (t->argc)--; // decrement argc by 1
 
@@ -43,10 +43,12 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
             fprintf(stderr, "%i ms\n", execution_time/1000); // convert to milliseconds
         }
         *exitstatus = 0;
+        }
     }
     else {				// normal, exit commands
         run_cmd(exitstatus, t);
     }
+
 }
 
 void execute_semicolon_command(SHELLCMD *t, int *exitstatus)
