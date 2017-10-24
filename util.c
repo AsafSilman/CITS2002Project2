@@ -1,7 +1,5 @@
 #include "myshell.h"
 #include "util.h"
-#include <sys/wait.h>
-#include <sys/types.h>
 
 void run_cmd(int *exitstatus, SHELLCMD *t)
 {

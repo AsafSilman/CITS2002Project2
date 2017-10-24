@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <sys/time.h>
+#include <sys/wait.h>
+#include <sys/types.h>
 
 //  Written by Chris.McDonald@uwa.edu.au, October 2017
 

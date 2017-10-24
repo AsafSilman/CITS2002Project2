@@ -1,7 +1,6 @@
 #include "myshell.h"
 #include "util.h"
 
-
 void execute_cmd_command(SHELLCMD *t, int *exitstatus)
 {
     // INTERNAL COMMANDS
@@ -78,4 +77,17 @@ void execute_or_command(SHELLCMD *t, int *exitstatus)
     }
 
     *exitstatus = execute_shellcmd(t->right);
+}
+
+void execute_subshell_command(SHELLCMD *t, int *exitstatus)
+{
+    // TODO stdin/out redirection
+    pid_t  pid = fork();
+    switch (pid){
+        case 0 : // child process
+            *exitstatus = execute_shellcmd(t->left); break;
+        case -1 : //fork failed
+            *exitstatus	= EXIT_FAILURE; break;
+        default : wait(NULL); break;// parent process
+    }
 }
