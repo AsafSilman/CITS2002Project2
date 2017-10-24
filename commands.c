@@ -38,11 +38,11 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
         (t->argv)--; // increment argv by 1        
         gettimeofday( &end_time, NULL );
 
-        if (*exitstatus == 0){ // 
+        if (*exitstatus == EXIT_SUCCESS){ // 
             int execution_time = end_time.tv_usec - start_time.tv_usec;
             fprintf(stderr, "%i ms\n", execution_time/1000); // convert to milliseconds
         }
-        *exitstatus = 0;
+        *exitstatus = EXIT_SUCCESS;
     }
     else {				// normal, exit commands
         run_cmd(exitstatus, t);
@@ -51,15 +51,22 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
 
 void execute_semicolon_command(SHELLCMD *t, int *exitstatus)
 {
-    execute_shellcmd(t->left);
+    if (t->left == NULL || t->right == NULL){
+		*exitstatus = EXIT_FAILURE; return;
+	}
+	execute_shellcmd(t->left);
     *exitstatus = execute_shellcmd(t->right); // Project Requirement [Step 4]
 }
 
 void execute_and_command(SHELLCMD *t, int *exitstatus)
 {
-    int last_exit;
+    if (t->left == NULL || t->right == NULL){
+		*exitstatus = EXIT_FAILURE; return;
+	}
+	
+	int last_exit;
     last_exit = execute_shellcmd(t->left);
-    if (last_exit != 0) {
+    if (last_exit != EXIT_SUCCESS) {
         *exitstatus = last_exit;
         return;
     }
@@ -69,9 +76,13 @@ void execute_and_command(SHELLCMD *t, int *exitstatus)
 
 void execute_or_command(SHELLCMD *t, int *exitstatus)
 {
-    int last_exit;
+    if (t->left == NULL || t->right == NULL){
+		*exitstatus = EXIT_FAILURE; return;
+	}
+	
+	int last_exit;
     last_exit = execute_shellcmd(t->left);
-    if (last_exit == 0) {
+    if (last_exit == EXIT_SUCCESS) {
         *exitstatus = last_exit;
         return;
     }
