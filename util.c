@@ -74,9 +74,9 @@ void execute_outfile(SHELLCMD *t)
 {
     /* This function works for appending, for truncating file data 
        and for creating a new file if did not previously exist */
-
+       
     int out;
-
+    int save_out = dup(STDOUT_FILENO);
     if (t->append) {
         out = open(t->outfile, O_WRONLY|O_CREAT|O_APPEND, FILE_ACCESS);        
     }
@@ -85,5 +85,6 @@ void execute_outfile(SHELLCMD *t)
     }
     dup2(out, STDOUT_FILENO);
     fflush(stdout); 
-    close(out);
+    dup2(STDOUT_FILENO, save_out);
+    close(out); close(save_out);
 }
