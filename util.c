@@ -13,10 +13,10 @@ void run_cmd(int *exitstatus, SHELLCMD *t)
                 execute_infile(t);
             }
     
-            if (t->outfile != NULL) {
+            if (t->outfile != NULL ) {
                 execute_outfile(t);
             }
-    
+
             if (t->argv[0][0] == '/'){
                 // Path Given
                 execv(t->argv[0], t->argv); // attempt to start process
@@ -72,8 +72,17 @@ void execute_infile(SHELLCMD *t)
 
 void execute_outfile(SHELLCMD *t)
 {
+    /* This function works for appending, for truncating file data 
+       and for creating a new file if did not previously exist */
 
-    int out = open(t->outfile, O_RDWR|O_CREAT, FILE_ACCESS);
+    int out;
+
+    if (t->append) {
+        out = open(t->outfile, O_WRONLY|O_CREAT|O_APPEND, FILE_ACCESS);        
+    }
+    else {
+        out = open(t->outfile, O_WRONLY|O_CREAT|O_TRUNC, FILE_ACCESS);
+    }
     dup2(out, STDOUT_FILENO);
     fflush(stdout); 
     close(out);
