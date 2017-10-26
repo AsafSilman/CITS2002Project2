@@ -1,6 +1,9 @@
 #include "myshell.h"
 #include "util.h"
 
+#define READ 0
+#define WRITE 1
+
 void execute_cmd_command(SHELLCMD *t, int *exitstatus)
 {
     // INTERNAL COMMANDS
@@ -92,5 +95,46 @@ void execute_subshell_command(SHELLCMD *t, int *exitstatus)
         case -1 : //fork failed
             *exitstatus	= EXIT_FAILURE; break;
         default : wait(NULL); break;// parent process
+    }
+}
+
+void execute_pipe_command(SHELLCMD *t, int *exitstatus)
+{
+    int pipefd[2];
+    int prv_stdout, prv_stdin = 0;
+
+    if (pipe(pipefd) == -1){
+        perror("pipe"); // PIPE ERROR
+        *exitstatus = EXIT_FAILURE; return;
+    }
+
+    switch (fork()){
+        case 0 :  // Child fork
+            // Save stdout, will be used to reset stdout
+            prv_stdout = dup(STDOUT_FILENO);
+
+            // Configure stdout
+            close(STDOUT_FILENO);
+            dup2(pipefd[WRITE], STDOUT_FILENO);
+            close(pipefd[READ]);
+
+            execute_shellcmd(t->left); // Run left command
+
+            dup2(prv_stdout, STDOUT_FILENO); //Reset stdout
+            exit(0);
+        case -1 : //fork failed
+            *exitstatus	= EXIT_FAILURE; break;
+        default :
+            wait(NULL); // Wait for child to finish
+            prv_stdin = dup(STDIN_FILENO); // Save stdin
+
+            // Configure stdin
+            close(STDIN_FILENO);
+            dup2(pipefd[READ], STDIN_FILENO);
+            close(pipefd[WRITE]);
+
+            *exitstatus = execute_shellcmd(t->right); // Run right command
+
+            dup2(prv_stdin, STDIN_FILENO); //Reset stdin
     }
 }
