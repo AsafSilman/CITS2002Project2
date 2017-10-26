@@ -6,6 +6,7 @@
 
 void execute_cmd_command(SHELLCMD *t, int *exitstatus)
 {
+
     // INTERNAL COMMANDS
     if(strcmp(t->argv[0], "exit") == 0){
         // If first argument is 'exit', strcmp returns 0
@@ -30,9 +31,8 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
         // Case if time has no arguments
         if (t->argc == 1){
             *exitstatus = EXIT_SUCCESS;
-            return;
         }
-
+        else {
         (t->argv)++; // increment argv by 1
         (t->argc)--; // decrement argc by 1
 
@@ -50,6 +50,7 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
     else {				// normal, exit commands
         run_cmd(exitstatus, t);
     }
+
 }
 
 void execute_semicolon_command(SHELLCMD *t, int *exitstatus)
@@ -87,14 +88,22 @@ void execute_or_command(SHELLCMD *t, int *exitstatus)
 
 void execute_subshell_command(SHELLCMD *t, int *exitstatus)
 {
-    // TODO stdin/out redirection
     pid_t  pid = fork();
     switch (pid){
         case 0 : // child process
-            *exitstatus = execute_shellcmd(t->left); break;
+            if (t->infile != NULL) {
+                execute_infile(t);
+            }
+            if (t->outfile != NULL ) {
+                execute_outfile(t);
+            }
+            *exitstatus = execute_shellcmd(t->left);
+            exit(0);
         case -1 : //fork failed
             *exitstatus	= EXIT_FAILURE; break;
-        default : wait(NULL); break;// parent process
+        default : 
+            wait(NULL);
+            break;// parent process
     }
 }
 
