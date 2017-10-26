@@ -33,19 +33,20 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
             *exitstatus = EXIT_SUCCESS;
         }
         else {
-        (t->argv)++; // increment argv by 1
-        (t->argc)--; // decrement argc by 1
+            (t->argv)++; // increment argv by 1
+            (t->argc)--; // decrement argc by 1
 
-        gettimeofday( &start_time, NULL );
-        *exitstatus = execute_shellcmd(t);
-        (t->argv)--; // increment argv by 1        
-        gettimeofday( &end_time, NULL );
+            gettimeofday( &start_time, NULL );
+            *exitstatus = execute_shellcmd(t);
+            (t->argv)--; // increment argv by 1        
+            gettimeofday( &end_time, NULL );
 
-        if (*exitstatus == EXIT_SUCCESS){ // 
-            int execution_time = end_time.tv_usec - start_time.tv_usec;
-            fprintf(stderr, "%i ms\n", execution_time/1000); // convert to milliseconds
+            if (*exitstatus == EXIT_SUCCESS){ // 
+                int execution_time = end_time.tv_usec - start_time.tv_usec;
+                fprintf(stderr, "%i ms\n", execution_time/1000); // convert to milliseconds
+            }
+            *exitstatus = EXIT_SUCCESS;
         }
-        *exitstatus = EXIT_SUCCESS;
     }
     else {				// normal, exit commands
         run_cmd(exitstatus, t);
