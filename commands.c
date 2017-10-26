@@ -113,10 +113,9 @@ void execute_pipe_command(SHELLCMD *t, int *exitstatus)
             // Save stdout, will be used to reset stdout
             prv_stdout = dup(STDOUT_FILENO);
 
-            // Configure stdout
-            close(STDOUT_FILENO);
-            dup2(pipefd[WRITE], STDOUT_FILENO);
-            close(pipefd[READ]);
+            close(STDOUT_FILENO); // will open this back later on
+            dup2(pipefd[WRITE], STDOUT_FILENO);  // Configure stdout
+            close(pipefd[READ]); // Wont need this
 
             execute_shellcmd(t->left); // Run left command
 
@@ -124,16 +123,15 @@ void execute_pipe_command(SHELLCMD *t, int *exitstatus)
             exit(0);
         case -1 : //fork failed
             *exitstatus	= EXIT_FAILURE; break;
-        default :
-            wait(NULL); // Wait for child to finish
+        default : // Parent
+            wait(NULL); // Wait for child to finish before continuing
             prv_stdin = dup(STDIN_FILENO); // Save stdin
 
-            // Configure stdin
-            close(STDIN_FILENO);
-            dup2(pipefd[READ], STDIN_FILENO);
-            close(pipefd[WRITE]);
+            close(STDIN_FILENO); // will open this back later on
+            dup2(pipefd[READ], STDIN_FILENO); // Configure stdin
+            close(pipefd[WRITE]); // Wont need this
 
-            *exitstatus = execute_shellcmd(t->right); // Run right command
+            *exitstatus = execute_shellcmd(t->right); // Run right command + record exit status
 
             dup2(prv_stdin, STDIN_FILENO); //Reset stdin
     }
