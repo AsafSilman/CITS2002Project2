@@ -5,14 +5,13 @@
 
 void run_cmd(int *exitstatus, SHELLCMD *t)
 {
-
     pid_t  pid = fork();
     switch (pid){
         case 0 : // child process
             if (t->infile != NULL) {
                 execute_infile(t);
             }
-    
+            
             if (t->outfile != NULL ) {
                 execute_outfile(t);
             }
@@ -76,15 +75,17 @@ void execute_outfile(SHELLCMD *t)
        and for creating a new file if did not previously exist */
        
     int out;
-    int save_out = dup(STDOUT_FILENO);
+    // int save_out = dup(STDOUT_FILENO);
     if (t->append) {
         out = open(t->outfile, O_WRONLY|O_CREAT|O_APPEND, FILE_ACCESS);        
     }
     else {
         out = open(t->outfile, O_WRONLY|O_CREAT|O_TRUNC, FILE_ACCESS);
     }
+    // close(STDOUT_FILENO);
+    // dup2(out);
     dup2(out, STDOUT_FILENO);
-    fflush(stdout); 
-    dup2(STDOUT_FILENO, save_out);
-    close(out); close(save_out);
+    // fflush(stdout); 
+    // close(out);
+    // dup2(save_out, STDOUT_FILENO);
 }

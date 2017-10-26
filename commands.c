@@ -83,21 +83,21 @@ void execute_or_command(SHELLCMD *t, int *exitstatus)
 
 void execute_subshell_command(SHELLCMD *t, int *exitstatus)
 {
-    if (t->infile != NULL) {
-        printf("Infile is : %s\n", t->infile);
-        execute_infile(t);
-    }
-    if (t->outfile != NULL ) {
-        printf("Outfile is : %s\n", t->outfile);
-        execute_outfile(t);
-    }
-
     pid_t  pid = fork();
     switch (pid){
         case 0 : // child process
-            *exitstatus = execute_shellcmd(t->left); break;
+            if (t->infile != NULL) {
+                execute_infile(t);
+            }
+            if (t->outfile != NULL ) {
+                execute_outfile(t);
+            }
+            *exitstatus = execute_shellcmd(t->left);
+            exit(0);
         case -1 : //fork failed
             *exitstatus	= EXIT_FAILURE; break;
-        default : wait(NULL); break;// parent process
+        default : 
+            wait(NULL);
+            break;// parent process
     }
 }
