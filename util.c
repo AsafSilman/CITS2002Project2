@@ -6,7 +6,7 @@ void run_cmd(int *exitstatus, SHELLCMD *t)
     pid_t  pid = fork();
     switch (pid){
         case 0 : // child process
-            if (t->argv[0][0] == '/'){
+            if (t->argv[0][0] == '/' || t->argv[0][0] == '.'){
                 // Path Given
                 execv(t->argv[0], t->argv); // attempt to start process
             }
