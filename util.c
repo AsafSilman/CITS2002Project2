@@ -96,21 +96,19 @@ bool run_shellscript(char **argv)
     int access_status = access(script_name, R_OK);
     if (access_status != 0) { return false; }
     FILE *script = fopen(script_name, "r");
-    int script_fd = fileno(script);
     // printf("Running Shellscript %s Access status is %i\n", script_name, access_status);
 
+    perror("WUT");
     pid = fork();
     switch (pid){
         case 0 : // child process
-            close(STDIN_FILENO);
-            dup2(script_fd, STDIN_FILENO);
+            dup2(fileno(script), STDIN_FILENO);
+            fclose(script);
             execv(argv0, &argv0);
             exit(0);
         case -1 : perror("fork failed"); break; // fork error
         default : // parent process
             wait(NULL);
     }
-    
-    fclose(script);
     return true;
 }
