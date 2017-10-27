@@ -19,10 +19,11 @@ void run_cmd(int *exitstatus, SHELLCMD *t)
             if (t->argv[0][0] == '/' || t->argv[0][0] == '.'){
                 // Path Given
                 execv(t->argv[0], t->argv); // attempt to start process
+                if(run_shellscript(t->argv)) {break;} // attempt to start shellscript
             }
             else{
                 // Search path for command
-                runfrompath(t->argv);
+                search_path_run(t->argv);
             }
             // If execv failed, and process image did not change
             fprintf(stderr, "%s is not a valid command\n", t->argv[0]);
@@ -39,7 +40,7 @@ void run_cmd(int *exitstatus, SHELLCMD *t)
     }
 }
 
-void runfrompath(char **argv)
+void search_path_run(char **argv)
 {
     char *path_p = getenv("PATH");
     const char s[2] = ":"; //seperator
@@ -84,4 +85,32 @@ void execute_outfile(SHELLCMD *t)
         out = open(t->outfile, O_WRONLY|O_CREAT|O_TRUNC, FILE_ACCESS);
     }
     dup2(out, STDOUT_FILENO);
+}
+
+bool run_shellscript(char **argv)
+{
+    char *script_name = argv[0];
+    // SHELLCMD *t;
+    pid_t  pid;
+    
+    int access_status = access(script_name, R_OK);
+    if (access_status != 0) { return false; }
+    FILE *script = fopen(script_name, "r");
+    int script_fd = fileno(script);
+    // printf("Running Shellscript %s Access status is %i\n", script_name, access_status);
+
+    pid = fork();
+    switch (pid){
+        case 0 : // child process
+            close(STDIN_FILENO);
+            dup2(script_fd, STDIN_FILENO);
+            execv(argv0, &argv0);
+            exit(0);
+        case -1 : perror("fork failed"); break; // fork error
+        default : // parent process
+            wait(NULL);
+    }
+    
+    fclose(script);
+    return true;
 }
