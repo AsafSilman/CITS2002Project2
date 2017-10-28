@@ -19,7 +19,7 @@ void run_cmd(int *exitstatus, SHELLCMD *t)
             if (t->argv[0][0] == '/' || t->argv[0][0] == '.'){
                 // Path Given
                 execv(t->argv[0], t->argv); // attempt to start process
-                if(run_shellscript(t->argv)) {break;} // attempt to start shellscript
+                run_shellscript(t->argv); // attempt to start shellscript
             }
             else{
                 // Search path for command
@@ -87,28 +87,21 @@ void execute_outfile(SHELLCMD *t)
     dup2(out, STDOUT_FILENO);
 }
 
-bool run_shellscript(char **argv)
+// To be used only in run_cmd
+void run_shellscript(char **argv)
 {
-    char *script_name = argv[0];
-    // SHELLCMD *t;
-    pid_t  pid;
+    int access_status = access(argv[0], R_OK);
+    if (access_status != 0) { return; }
     
-    int access_status = access(script_name, R_OK);
-    if (access_status != 0) { return false; }
-    FILE *script = fopen(script_name, "r");
-    // printf("Running Shellscript %s Access status is %i\n", script_name, access_status);
+    FILE *script = fopen(argv[0], "r");
+    
+    char *t_argv[2] = {argv0, NULL};
+    
+    dup2(fileno(script), STDIN_FILENO);
+    fclose(script);
+    
+    execv(argv0, t_argv); // start myshell
+    perror("Failed to start myshell process")
+    exit(0); //kills child process in run_cmd
 
-    perror("WUT");
-    pid = fork();
-    switch (pid){
-        case 0 : // child process
-            dup2(fileno(script), STDIN_FILENO);
-            fclose(script);
-            execv(argv0, &argv0);
-            exit(0);
-        case -1 : perror("fork failed"); break; // fork error
-        default : // parent process
-            wait(NULL);
-    }
-    return true;
 }
