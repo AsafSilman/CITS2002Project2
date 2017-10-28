@@ -101,7 +101,7 @@ void run_shellscript(char **argv)
     fclose(script);
     
     execv(argv0, t_argv); // start myshell
-    perror("Failed to start myshell process")
+    perror("Failed to start myshell process");
     exit(0); //kills child process in run_cmd
 
 }
