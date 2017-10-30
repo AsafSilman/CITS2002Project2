@@ -146,3 +146,19 @@ void execute_pipe_command(SHELLCMD *t, int *exitstatus)
             dup2(prv_stdin, STDIN_FILENO); //Reset stdin
     }
 }
+
+void execute_background_command(SHELLCMD *t, int *exitstatus)
+{
+    pid_t  pid = fork();
+    switch (pid){
+        case 0 :  // Child fork
+            signal(SIGKILL, background_command_handler);
+            execute_shellcmd(t->left);
+            perror("Finished??");
+            exit(0);
+        case -1 : // Error
+            *exitstatus	= EXIT_FAILURE; return; break;
+        default : //Parent
+            *exitstatus	= execute_shellcmd(t->right); return; break;
+    }
+}

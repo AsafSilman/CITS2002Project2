@@ -9,4 +9,4 @@ extern void search_path_run(char**);
 extern void run_cmd(int*, SHELLCMD*);
 extern void execute_infile(SHELLCMD*);
 extern void execute_outfile(SHELLCMD*);
-
+extern void background_command_handler(int);

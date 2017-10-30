@@ -6,6 +6,7 @@
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <signal.h> // For step 9
 
 //  Written by Chris.McDonald@uwa.edu.au, October 2017
 

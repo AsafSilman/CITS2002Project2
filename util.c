@@ -103,5 +103,14 @@ void run_shellscript(char **argv)
     execv(argv0, t_argv); // start myshell
     perror("Failed to start myshell process");
     exit(0); //kills child process in run_cmd
+}
 
+void background_command_handler(int sig)
+{
+    perror("Called");
+    pid_t pid;
+    pid = wait(NULL);
+
+    printf("Pid %d exited.\n", pid);
+    exit(0);
 }
