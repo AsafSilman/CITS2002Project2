@@ -10,6 +10,9 @@
 #define READ 0
 #define WRITE 1
 
+pid_t BACKGROUND_PROCESSES[MAX_BG_PROCESSES];
+int   *num_background_processes; // Count of current number of background processes
+
 void execute_cmd_command(SHELLCMD *t, int *exitstatus)
 {
 
@@ -17,6 +20,7 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
     if(strcmp(t->argv[0], "exit") == 0){
         /* Step 3 internal command 'exit' is called */
         printf("\n");
+        kill_background_processes();
         exit(EXIT_SUCCESS);
     }
     else if(strcmp(t->argv[0], "cd") == 0){
@@ -167,13 +171,14 @@ void execute_background_command(SHELLCMD *t, int *exitstatus)
     pid_t  pid = fork();
     switch (pid){
         case 0 :  // Child fork
+            printf("Process ID %i has started\n", getpid());
             execute_shellcmd(t->left);
             kill(getppid(), SIGUSR1);
             exit(0);
-            break;
         case -1 : // Error
             *exitstatus	= EXIT_FAILURE; return; break;
         default : //Parent
+            add_background_processes(pid);
             signal(SIGUSR1, background_command_handler);
             *exitstatus	= execute_shellcmd(t->right); return; break;
     }

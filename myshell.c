@@ -30,7 +30,11 @@ int main(int argc, char *argv[])
     if(CDPATH == NULL) {
 	CDPATH	= DEFAULT_CDPATH;
     }
- 
+
+    // SETUP BACKGROUND PROCESS MANAGEMENT
+    num_background_processes = malloc(sizeof(pid_t));
+    *num_background_processes = 0;
+
 //  DETERMINE IF THIS SHELL IS INTERACTIVE
     interactive		= (isatty(fileno(stdin)) && isatty(fileno(stdout)));
 
@@ -52,5 +56,7 @@ int main(int argc, char *argv[])
     if(interactive) {
 	fputc('\n', stdout);
     }
+    kill_background_processes();
+
     return exitstatus;
 }

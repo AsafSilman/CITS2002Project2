@@ -15,6 +15,10 @@ bool	interactive	= false;
 
 // ------------------------------------------------------------------------
 
+pid_t BACKGROUND_PROCESSES[MAX_BG_PROCESSES];
+int   *num_background_processes; // Count of current number of background processes
+
+
 void check_allocation0(void *p, char *file, const char *func, int line)
 {
     if(p == NULL) {
@@ -196,17 +200,43 @@ void background_command_handler(int sig)
 {
     /* Step 9 Background Execution 
        This is the handler function for signal */
-    pid_t child_id = getpid();
-    while(waitpid(-1,NULL,WNOHANG)!=-1){;}
-    printf("Child process ID is %d\n", child_id);
-    // WNOHANG
-    // printf("Process %d has terminated.\n", child_id);
+    pid_t child_id = wait(NULL);
+    remove_background_processes(child_id);
+    printf("Process ID %d has finished\n", child_id);
 }
 
 void add_background_processes(pid_t pid)
 {
     /* Step 9 Background Execution
-       Function to keep a log of processes */
+    Function to keep a log of processes */
+    BACKGROUND_PROCESSES[*num_background_processes] = pid;
+    ++*num_background_processes;
+}
 
-    BACKGROUND_PROCESSES[NUM_BACKGROUND_PROCESSES++] = pid;
+void remove_background_processes(pid_t pid)
+{
+    /* Step 9 Background Execution
+       Function to remove completed processes */
+
+    int num = *num_background_processes;
+    for (int i=0; i<num; ++i) {
+        if (BACKGROUND_PROCESSES[i] == pid) {
+            BACKGROUND_PROCESSES[i] = BACKGROUND_PROCESSES[num-1];
+            BACKGROUND_PROCESSES[num-1] = 0;
+            break;
+        }
+    }
+    --*num_background_processes;
+}
+
+void kill_background_processes(void)
+{
+    int num = *num_background_processes;
+    for (int i=0; i<num; ++i) {
+        kill(BACKGROUND_PROCESSES[i], SIGKILL);
+    }
+    for (int i=0; i<num; ++i) {
+        waitpid(BACKGROUND_PROCESSES[i], NULL, 0);
+        printf("Killed process %i\n", BACKGROUND_PROCESSES[i]);
+    }
 }

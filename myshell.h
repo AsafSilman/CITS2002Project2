@@ -26,7 +26,7 @@
 #define COMMENT_CHAR		'#'	// comment character
 #define HOME_CHAR		'~'	// home directory character
 
-#define PID_ARRAY       128 // default array size for storing bg processes (Step 9)
+#define MAX_BG_PROCESSES      128 // default array size for storing bg processes (Step 9)
 
 //  ----------------------------------------------------------------------
 
@@ -127,9 +127,8 @@ extern void execute_infile(SHELLCMD*);
 extern void execute_outfile(SHELLCMD*);
 extern void background_command_handler(int);
 extern void add_background_processes(pid_t);
+extern void remove_background_processes(pid_t);
+extern void kill_background_processes(void);
 
-// ----------------------------------------------------------------------
-
-extern pid_t BACKGROUND_PROCESSES[PID_ARRAY];
-extern int NUM_BACKGROUND_PROCESSES;
-
+extern pid_t BACKGROUND_PROCESSES[MAX_BG_PROCESSES];
+extern int   *num_background_processes;
