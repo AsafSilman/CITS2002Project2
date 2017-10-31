@@ -192,8 +192,6 @@ void background_command_handler(int sig)
     pid_t child_id = getpid();    
     while(waitpid(-1,NULL,WNOHANG)!=-1){;}
     printf("Child process ID is %d\n", child_id);
-    signal(SIGCHLD, SIG_DFL);
-    fputc('\n', stdin);
     // WNOHANG
     // fprintf(stderr, "Process %d has terminated.\n", pid);
 }
