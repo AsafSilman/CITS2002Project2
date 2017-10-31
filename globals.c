@@ -197,14 +197,10 @@ void background_command_handler(int sig)
     /* Step 9 Background Execution 
        This is the handler function for signal */
     pid_t child_id = getpid();
-    add_background_processes(child_id);
     while(waitpid(-1,NULL,WNOHANG)!=-1){;}
     printf("Child process ID is %d\n", child_id);
-    signal(sig, SIG_DFL);
-    //fputc('\n', stdin);
-
     // WNOHANG
-    printf("Process %d has terminated.\n", child_id);
+    // printf("Process %d has terminated.\n", child_id);
 }
 
 void add_background_processes(pid_t pid)

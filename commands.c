@@ -165,22 +165,16 @@ void execute_background_command(SHELLCMD *t, int *exitstatus)
 {
     /* Step 9 Background Execution TODO */
     pid_t  pid = fork();
-
     switch (pid){
         case 0 :  // Child fork
-            
-            //background_command_handler(SIGUSR1);
-            signal(SIGUSR1, background_command_handler);
             execute_shellcmd(t->left);
-            signal(SIGTERM, SIG_DFL);            
-            kill(getppid(), SIGCHLD);
+            kill(getppid(), SIGUSR1);
             exit(0);
             break;
         case -1 : // Error
             *exitstatus	= EXIT_FAILURE; return; break;
         default : //Parent
-            *exitstatus	= execute_shellcmd(t->right);
-            // should this check if child has completely finished, before returning?
-            return; break;
+            signal(SIGUSR1, background_command_handler);
+            *exitstatus	= execute_shellcmd(t->right); return; break;
     }
 }
