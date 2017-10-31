@@ -193,5 +193,5 @@ void background_command_handler(int sig)
 {
     pid_t pid = wait(NULL);
 
-    printf("Pid %d exited.\n", pid);
+    fprintf(stderr, "Process %d has terminated.\n", pid);
 }
