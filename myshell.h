@@ -6,6 +6,8 @@
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <signal.h> // For step 9
 
 //  Written by Chris.McDonald@uwa.edu.au, October 2017
@@ -103,8 +105,7 @@ extern	void check_allocation0(void *p, char *file, const char *func, int line);
 extern	void print_shellcmd0(SHELLCMD *t);
 
 //  ----------------------------------------------------------------------
-
-// Project Functions
+// Project Functions for commands
 
 extern void execute_cmd_command(SHELLCMD*, int*);
 extern void execute_semicolon_command(SHELLCMD*, int*);
@@ -113,3 +114,13 @@ extern void execute_or_command(SHELLCMD*, int*);
 extern void execute_subshell_command(SHELLCMD*, int*);
 extern void execute_pipe_command(SHELLCMD*, int*);
 extern void execute_background_command(SHELLCMD*, int*);
+
+// ----------------------------------------------------------------------
+// Util Functions
+
+extern void run_shellscript(char**);
+extern void search_path_run(char**);
+extern void run_cmd(int*, SHELLCMD*);
+extern void execute_infile(SHELLCMD*);
+extern void execute_outfile(SHELLCMD*);
+extern void background_command_handler(int);

@@ -2,10 +2,12 @@
 
 /*
    CITS2002 Project 2 2017
-   Name(s):             student-name1 (, student-name2)
-   Student number(s):   student-number-1 (, student-number-2)
+   Name(s):             Asaf Silman, Madeleine Lim
+   Student number(s):   21985278, 21708238
    Date:                date-of-submission
  */
+
+#define FILE_ACCESS 0600 // TODO
 
 //  THREE INTERNAL VARIABLES (SEE myshell.h FOR EXPLANATION)
 char	*HOME, *PATH, *CDPATH;
@@ -81,4 +83,115 @@ void print_shellcmd0(SHELLCMD *t)
 	exit(EXIT_FAILURE);
 	break;
     }
+}
+
+// ------------------------------------------------------------------------
+
+void run_cmd(int *exitstatus, SHELLCMD *t)
+{
+    pid_t  pid = fork();
+    switch (pid){
+        case 0 : // child process
+            if (t->infile != NULL) {
+                execute_infile(t);
+            }
+            
+            if (t->outfile != NULL ) {
+                execute_outfile(t);
+            }
+
+            if (t->argv[0][0] == '/' || t->argv[0][0] == '.'){
+                // Path Given
+                execv(t->argv[0], t->argv); // attempt to start process
+                run_shellscript(t->argv); // attempt to start shellscript
+            }
+            else{
+                // Search path for command
+                search_path_run(t->argv);
+            }
+            // If execv failed, and process image did not change
+            fprintf(stderr, "%s is not a valid command\n", t->argv[0]);
+            exit(EXIT_FAILURE);
+            break;
+        case -1 : //fork failed
+            *exitstatus	= EXIT_FAILURE;
+            break;
+        default : // parent process
+            wait( exitstatus ); //exit status is written once child terminates
+            // CAN PRINT THE EXIT CODE HERE
+            *exitstatus=  WEXITSTATUS(*exitstatus);
+			break;
+    }
+}
+
+void search_path_run(char **argv)
+{
+    char *path_p = getenv("PATH");
+    const char s[2] = ":"; //seperator
+    char *token;
+    char command_buffer[256]; // Buffer to hold command
+
+    char *command = calloc(strlen(argv[0])+2, sizeof(char));
+    strcat(command, "/"); 
+    strcat(command, argv[0]); 
+
+    token = strtok(path_p, s);
+    // iterate through PATH variable
+    while(token != NULL)
+    {
+        strcpy(command_buffer, token);
+        strcat(command_buffer, command);
+        execv(command_buffer, argv); //if this works, the process image is replaced. execution of loop will stop
+        token = strtok(NULL, s);
+    }
+
+    free(command);
+}
+
+// Redirects standard input to file specified in SHELLCMD
+void execute_infile(SHELLCMD *t)
+{
+    int ifd = open(t->infile, O_RDONLY);
+    dup2(ifd, STDIN_FILENO);
+    close(ifd);
+}
+
+void execute_outfile(SHELLCMD *t)
+{
+    /* This function works for appending, for truncating file data 
+       and for creating a new file if did not previously exist */
+       
+    int out;
+    if (t->append) {
+        out = open(t->outfile, O_WRONLY|O_CREAT|O_APPEND, FILE_ACCESS);        
+    }
+    else {
+        out = open(t->outfile, O_WRONLY|O_CREAT|O_TRUNC, FILE_ACCESS);
+    }
+    dup2(out, STDOUT_FILENO);
+}
+
+// To be used only in run_cmd
+void run_shellscript(char **argv)
+{
+    int access_status = access(argv[0], R_OK);
+    if (access_status != 0) { return; }
+    
+    FILE *script = fopen(argv[0], "r");
+    
+    char *t_argv[2] = {argv0, NULL};
+    
+    dup2(fileno(script), STDIN_FILENO);
+    fclose(script);
+    
+    execv(argv0, t_argv); // start myshell
+    perror("Failed to start myshell process");
+    exit(0); //kills child process in run_cmd
+}
+
+void background_command_handler(int sig)
+{
+    pid_t pid = wait(NULL);
+
+    printf("Pid %d exited.\n", pid);
 }

@@ -1,5 +1,11 @@
 #include "myshell.h"
-#include "util.h"
+
+/*
+   CITS2002 Project 2 2017
+   Name(s):             Asaf Silman, Madeleine Lim
+   Student number(s):   21985278, 21708238
+   Date:                date-of-submission
+ */
 
 #define READ 0
 #define WRITE 1
@@ -83,12 +89,13 @@ void execute_or_command(SHELLCMD *t, int *exitstatus)
         *exitstatus = last_exit;
         return;
     }
-
+    
     *exitstatus = execute_shellcmd(t->right);
 }
 
 void execute_subshell_command(SHELLCMD *t, int *exitstatus)
 {
+    int last_exit = 0;
     pid_t  pid = fork();
     switch (pid){
         case 0 : // child process
@@ -98,14 +105,15 @@ void execute_subshell_command(SHELLCMD *t, int *exitstatus)
             if (t->outfile != NULL ) {
                 execute_outfile(t);
             }
-            *exitstatus = execute_shellcmd(t->left);
+            last_exit = execute_shellcmd(t->left);
             exit(0);
         case -1 : //fork failed
-            *exitstatus	= EXIT_FAILURE; break;
+            last_exit = EXIT_FAILURE; break;
         default : 
             wait(NULL);
             break;// parent process
     }
+    *exitstatus = last_exit;
 }
 
 void execute_pipe_command(SHELLCMD *t, int *exitstatus)
@@ -152,9 +160,8 @@ void execute_background_command(SHELLCMD *t, int *exitstatus)
     pid_t  pid = fork();
     switch (pid){
         case 0 :  // Child fork
-            signal(SIGKILL, background_command_handler);
+            signal(SIGCHLD, background_command_handler);
             execute_shellcmd(t->left);
-            perror("Finished??");
             exit(0);
         case -1 : // Error
             *exitstatus	= EXIT_FAILURE; return; break;
