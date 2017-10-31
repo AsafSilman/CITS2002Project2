@@ -158,13 +158,16 @@ void execute_pipe_command(SHELLCMD *t, int *exitstatus)
 void execute_background_command(SHELLCMD *t, int *exitstatus)
 {
     pid_t  pid = fork();
-    pid_t child_id;
+    int ifd;
     switch (pid){
         case 0 :  // Child fork
-            child_id = getpid();
-            printf("Child process ID is %d\n", child_id);
+            ifd = open("/dev/null", O_RDONLY);
+            dup2(ifd, STDIN_FILENO);
+            close(ifd);
+
             signal(SIGCHLD, background_command_handler);
             execute_shellcmd(t->left);
+            kill(getppid(), SIGCHLD);
             exit(0);
         case -1 : // Error
             *exitstatus	= EXIT_FAILURE; return; break;
