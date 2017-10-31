@@ -9,6 +9,7 @@
 
 int main(int argc, char *argv[])
 {
+
 //  REMEMBER THE PROGRAM'S NAME (TO REPORT ANY LATER ERROR MESSAGES)
     argv0	= (argv0 = strrchr(argv[0],'/')) ? argv0+1 : argv[0];
     argc--;				// skip 1st command-line argument
@@ -29,7 +30,7 @@ int main(int argc, char *argv[])
     if(CDPATH == NULL) {
 	CDPATH	= DEFAULT_CDPATH;
     }
-
+ 
 //  DETERMINE IF THIS SHELL IS INTERACTIVE
     interactive		= (isatty(fileno(stdin)) && isatty(fileno(stdout)));
 

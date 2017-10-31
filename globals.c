@@ -87,6 +87,7 @@ void print_shellcmd0(SHELLCMD *t)
 
 void run_cmd(int *exitstatus, SHELLCMD *t)
 {
+    /* Step 1 Execute commands */
     pid_t  pid = fork();
     switch (pid){
         case 0 : // child process
@@ -124,6 +125,7 @@ void run_cmd(int *exitstatus, SHELLCMD *t)
 
 void search_path_run(char **argv)
 {
+    /* Step 2 Search path for the command specified */
     char *path_p = getenv("PATH");
     const char s[2] = ":"; //seperator
     char *token;
@@ -134,7 +136,7 @@ void search_path_run(char **argv)
     strcat(command, argv[0]); 
 
     token = strtok(path_p, s);
-    // iterate through PATH variable
+    // Iterate through PATH variable
     while(token != NULL)
     {
         strcpy(command_buffer, token);
@@ -146,9 +148,10 @@ void search_path_run(char **argv)
     free(command);
 }
 
-// Redirects standard input to file specified in SHELLCMD
 void execute_infile(SHELLCMD *t)
 {
+    /* Step 6 Redirects standard input to file specified in SHELLCMD */
+
     int ifd = open(t->infile, O_RDONLY);
     dup2(ifd, STDIN_FILENO);
     close(ifd);
@@ -156,8 +159,9 @@ void execute_infile(SHELLCMD *t)
 
 void execute_outfile(SHELLCMD *t)
 {
-    /* This function works for appending, for truncating file data 
-       and for creating a new file if did not previously exist */
+    /* Step 6 Redirects output to file specified in SHELCMD.
+      This function works for appending, truncating file data 
+      and creating a new file if it did not previously exist */
        
     int out;
     if (t->append) {
@@ -169,9 +173,10 @@ void execute_outfile(SHELLCMD *t)
     dup2(out, STDOUT_FILENO);
 }
 
-// To be used only in run_cmd
 void run_shellscript(char **argv)
 {
+    /* Step 8 Shell script execution
+      To be used only in run_cmd */
     int access_status = access(argv[0], R_OK);
     if (access_status != 0) { return; }
     
@@ -189,11 +194,23 @@ void run_shellscript(char **argv)
 
 void background_command_handler(int sig)
 {
-    pid_t child_id = getpid();    
+    /* Step 9 Background Execution 
+       This is the handler function for signal */
+    pid_t child_id = getpid();
+    add_background_processes(child_id);
     while(waitpid(-1,NULL,WNOHANG)!=-1){;}
     printf("Child process ID is %d\n", child_id);
-    signal(SIGCHLD, SIG_DFL);
-    fputc('\n', stdin);
+    signal(sig, SIG_DFL);
+    //fputc('\n', stdin);
+
     // WNOHANG
-    // fprintf(stderr, "Process %d has terminated.\n", pid);
+    printf("Process %d has terminated.\n", child_id);
+}
+
+void add_background_processes(pid_t pid)
+{
+    /* Step 9 Background Execution
+       Function to keep a log of processes */
+
+    BACKGROUND_PROCESSES[NUM_BACKGROUND_PROCESSES++] = pid;
 }

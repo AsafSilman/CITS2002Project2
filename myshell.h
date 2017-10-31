@@ -26,6 +26,8 @@
 #define COMMENT_CHAR		'#'	// comment character
 #define HOME_CHAR		'~'	// home directory character
 
+#define PID_ARRAY       128 // default array size for storing bg processes (Step 9)
+
 //  ----------------------------------------------------------------------
 
 //  AN enum IN C99 'GENERATES' A SEQUENCE OF UNIQUE, ASCENDING CONSTANTS
@@ -124,3 +126,10 @@ extern void run_cmd(int*, SHELLCMD*);
 extern void execute_infile(SHELLCMD*);
 extern void execute_outfile(SHELLCMD*);
 extern void background_command_handler(int);
+extern void add_background_processes(pid_t);
+
+// ----------------------------------------------------------------------
+
+extern pid_t BACKGROUND_PROCESSES[PID_ARRAY];
+extern int NUM_BACKGROUND_PROCESSES;
+

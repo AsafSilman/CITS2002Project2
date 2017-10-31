@@ -4,7 +4,7 @@
    CITS2002 Project 2 2017
    Name(s):             Asaf Silman, Madeleine Lim
    Student number(s):   21985278, 21708238
-   Date:                date-of-submission
+   Date:                date-10-2017
  */
 
 #define READ 0
@@ -15,12 +15,12 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
 
     // INTERNAL COMMANDS
     if(strcmp(t->argv[0], "exit") == 0){
-        // If first argument is 'exit', strcmp returns 0
+        /* Step 3 internal command 'exit' is called */
         printf("\n");
         exit(EXIT_SUCCESS);
     }
     else if(strcmp(t->argv[0], "cd") == 0){
-        // If first argument is 'cd', strcmp returns 0
+        /* Step 3 internal command 'cd' is called */
         if(t->argc==1) {
             chdir(HOME);
         }
@@ -30,7 +30,7 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
         *exitstatus = 0;
     }
     else if(strcmp(t->argv[0], "time") == 0){
-        // If first argument is 'exit', strcmp returns 0    
+        /* Step 3 internal command 'time' called */
         struct timeval  start_time;
         struct timeval  end_time;
         
@@ -54,7 +54,8 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
             *exitstatus = EXIT_SUCCESS;
         }
     }
-    else {				// normal, exit commands
+    else {
+        /* Step 1 Execute commands */
         run_cmd(exitstatus, t);
     }
 
@@ -62,6 +63,7 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
 
 void execute_semicolon_command(SHELLCMD *t, int *exitstatus)
 {
+    /* Step 4 Sequential execution of semicolons */
 	execute_shellcmd(t->left);
 	if (t->right == NULL){
 		*exitstatus = EXIT_FAILURE; return;
@@ -71,6 +73,7 @@ void execute_semicolon_command(SHELLCMD *t, int *exitstatus)
 
 void execute_and_command(SHELLCMD *t, int *exitstatus)
 {
+    /* Step 4 Sequential execution of double ampersands */
 	int last_exit;
     last_exit = execute_shellcmd(t->left);
     if (last_exit != EXIT_SUCCESS) {
@@ -83,6 +86,7 @@ void execute_and_command(SHELLCMD *t, int *exitstatus)
 
 void execute_or_command(SHELLCMD *t, int *exitstatus)
 {	
+    /* Step 4 Sequential execution of double lines */
 	int last_exit;
     last_exit = execute_shellcmd(t->left);
     if (last_exit == EXIT_SUCCESS) {
@@ -95,6 +99,7 @@ void execute_or_command(SHELLCMD *t, int *exitstatus)
 
 void execute_subshell_command(SHELLCMD *t, int *exitstatus)
 {
+    /* Step 5 Subshell execution */
     int last_exit = 0;
     pid_t  pid = fork();
     switch (pid){
@@ -118,6 +123,7 @@ void execute_subshell_command(SHELLCMD *t, int *exitstatus)
 
 void execute_pipe_command(SHELLCMD *t, int *exitstatus)
 {
+    /* Step 7 Pipeline sequential execution */
     int pipefd[2];
     int prv_stdout, prv_stdin = 0;
 
@@ -157,21 +163,24 @@ void execute_pipe_command(SHELLCMD *t, int *exitstatus)
 
 void execute_background_command(SHELLCMD *t, int *exitstatus)
 {
+    /* Step 9 Background Execution TODO */
     pid_t  pid = fork();
-    int ifd;
+
     switch (pid){
         case 0 :  // Child fork
-            ifd = open("/dev/null", O_RDONLY);
-            dup2(ifd, STDIN_FILENO);
-            close(ifd);
-
-            signal(SIGCHLD, background_command_handler);
+            
+            //background_command_handler(SIGUSR1);
+            signal(SIGUSR1, background_command_handler);
             execute_shellcmd(t->left);
+            signal(SIGTERM, SIG_DFL);            
             kill(getppid(), SIGCHLD);
             exit(0);
+            break;
         case -1 : // Error
             *exitstatus	= EXIT_FAILURE; return; break;
         default : //Parent
-            *exitstatus	= execute_shellcmd(t->right); return; break;
+            *exitstatus	= execute_shellcmd(t->right);
+            // should this check if child has completely finished, before returning?
+            return; break;
     }
 }

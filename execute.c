@@ -24,7 +24,7 @@ int execute_shellcmd(SHELLCMD *t)
             case CMD_OR        : execute_or_command(t, &exitstatus); break;
             case CMD_SUBSHELL  : execute_subshell_command(t, &exitstatus); break;
             case CMD_PIPE      : execute_pipe_command(t, &exitstatus); break;
-            case CMD_BACKGROUND: execute_background_command(t, & exitstatus); break;
+            case CMD_BACKGROUND: execute_background_command(t, &exitstatus); break;
         }
     }
     return exitstatus;   
