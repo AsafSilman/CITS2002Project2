@@ -161,7 +161,7 @@ void execute_background_command(SHELLCMD *t, int *exitstatus)
     switch (pid){
         case 0 :  // Child fork
             execute_shellcmd(t->left);
-            // kill(getppid(), SIGUSR1);
+            kill(getppid(), SIGUSR1);
             exit(0);
         case -1 : // Error
             *exitstatus	= EXIT_FAILURE; return; break;
