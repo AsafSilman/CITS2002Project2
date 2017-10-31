@@ -158,8 +158,11 @@ void execute_pipe_command(SHELLCMD *t, int *exitstatus)
 void execute_background_command(SHELLCMD *t, int *exitstatus)
 {
     pid_t  pid = fork();
+    pid_t child_id;
     switch (pid){
         case 0 :  // Child fork
+            child_id = getpid();
+            printf("Child process ID is %d\n", child_id);
             signal(SIGCHLD, background_command_handler);
             execute_shellcmd(t->left);
             exit(0);

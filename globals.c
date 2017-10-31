@@ -7,8 +7,6 @@
    Date:                date-of-submission
  */
 
-#define FILE_ACCESS 0600 // TODO
-
 //  THREE INTERNAL VARIABLES (SEE myshell.h FOR EXPLANATION)
 char	*HOME, *PATH, *CDPATH;
 
@@ -163,10 +161,10 @@ void execute_outfile(SHELLCMD *t)
        
     int out;
     if (t->append) {
-        out = open(t->outfile, O_WRONLY|O_CREAT|O_APPEND, FILE_ACCESS);        
+        out = open(t->outfile, O_WRONLY|O_CREAT|O_APPEND, O_RDWR);        
     }
     else {
-        out = open(t->outfile, O_WRONLY|O_CREAT|O_TRUNC, FILE_ACCESS);
+        out = open(t->outfile, O_WRONLY|O_CREAT|O_TRUNC, O_RDWR);
     }
     dup2(out, STDOUT_FILENO);
 }
@@ -192,6 +190,6 @@ void run_shellscript(char **argv)
 void background_command_handler(int sig)
 {
     pid_t pid = wait(NULL);
-
+    // WNOHANG
     fprintf(stderr, "Process %d has terminated.\n", pid);
 }
