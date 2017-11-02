@@ -122,6 +122,7 @@ void execute_subshell_command(SHELLCMD *t, int *exitstatus)
             last_exit = execute_shellcmd(t->left);
             exit(0);
         case -1 : //fork failed
+            perror("Fork Failed");
             last_exit = EXIT_FAILURE; break;
         default : 
             wait(NULL);
@@ -157,6 +158,7 @@ void execute_pipe_command(SHELLCMD *t, int *exitstatus)
             dup2(prv_stdout, STDOUT_FILENO); //Reset stdout
             exit(0);
         case -1 : //fork failed
+            perror("Fork Failed");    
             *exitstatus	= EXIT_FAILURE; break;
         default : // Parent
             wait(NULL); // Wait for child to finish before continuing
@@ -185,6 +187,7 @@ void execute_background_command(SHELLCMD *t, int *exitstatus)
             kill(getppid(), SIGUSR1);
             exit(0);
         case -1 : // Error
+            perror("Fork Failed");
             *exitstatus	= EXIT_FAILURE; return;
         default : //Parent
             add_background_processes(pid);

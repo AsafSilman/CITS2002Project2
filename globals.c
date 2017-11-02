@@ -120,6 +120,7 @@ void run_cmd(int *exitstatus, SHELLCMD *t)
             fprintf(stderr, "%s is not a valid command\n", t->argv[0]);
             exit(EXIT_FAILURE);
         case -1 : //fork failed
+            perror("Fork Failed");
             *exitstatus	= EXIT_FAILURE;
             break;
         default : // parent process
