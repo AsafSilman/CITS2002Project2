@@ -4,7 +4,7 @@
    CITS2002 Project 2 2017
    Name(s):             Asaf Silman, Madeleine Lim
    Student number(s):   21985278, 21708238
-   Date:                date-of-submission
+   Date:                02-11-2017
  */
 
 // -------------------------------------------------------------------

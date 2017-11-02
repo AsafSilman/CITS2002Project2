@@ -4,7 +4,7 @@
    CITS2002 Project 2 2017
    Name(s):             Asaf Silman, Madeleine Lim
    Student number(s):   21985278, 21708238
-   Date:                date-10-2017
+   Date:                02-11-2017
  */
 
 #define READ 0
@@ -67,7 +67,7 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
 
 void execute_semicolon_command(SHELLCMD *t, int *exitstatus)
 {
-    /* Step 4 Sequential execution of semicolons */
+    /* Step 4 Sequential execution of ';' */
 	execute_shellcmd(t->left);
 	if (t->right == NULL){
 		*exitstatus = EXIT_FAILURE; return;
@@ -77,7 +77,7 @@ void execute_semicolon_command(SHELLCMD *t, int *exitstatus)
 
 void execute_and_command(SHELLCMD *t, int *exitstatus)
 {
-    /* Step 4 Sequential execution of double ampersands */
+    /* Step 4 Sequential execution of '&&' */
 	int last_exit;
     last_exit = execute_shellcmd(t->left);
     if (last_exit != EXIT_SUCCESS) {
@@ -90,7 +90,7 @@ void execute_and_command(SHELLCMD *t, int *exitstatus)
 
 void execute_or_command(SHELLCMD *t, int *exitstatus)
 {	
-    /* Step 4 Sequential execution of double lines */
+    /* Step 4 Sequential execution of '||' */
 	int last_exit;
     last_exit = execute_shellcmd(t->left);
     if (last_exit == EXIT_SUCCESS) {
@@ -167,7 +167,7 @@ void execute_pipe_command(SHELLCMD *t, int *exitstatus)
 
 void execute_background_command(SHELLCMD *t, int *exitstatus)
 {
-    /* Step 9 Background Execution TODO */
+    /* Step 9 Background Execution */
     pid_t  pid = fork();
     switch (pid){
         case 0 :  // Child fork

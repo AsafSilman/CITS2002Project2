@@ -12,6 +12,13 @@
 
 //  Written by Chris.McDonald@uwa.edu.au, October 2017
 
+/*
+   CITS2002 Project 2 2017
+   Name(s):             Asaf Silman, Madeleine Lim
+   Student number(s):   21985278, 21708238
+   Date:                02-11-2017
+ */
+
 #if defined(__linux__)
     extern	char	*strdup(const char *str);
     extern	int	fileno(const FILE *fp);
@@ -107,6 +114,8 @@ extern	void check_allocation0(void *p, char *file, const char *func, int line);
 extern	void print_shellcmd0(SHELLCMD *t);
 
 //  ----------------------------------------------------------------------
+
+// FUNCTIONS AND VARIABLES CREATED TO MEET PROJECT REQUIREMENTS
 // Project Functions for commands
 
 extern void execute_cmd_command(SHELLCMD*, int*);

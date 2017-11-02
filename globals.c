@@ -4,7 +4,7 @@
    CITS2002 Project 2 2017
    Name(s):             Asaf Silman, Madeleine Lim
    Student number(s):   21985278, 21708238
-   Date:                date-of-submission
+   Date:                02-11-2017
  */
 
 //  THREE INTERNAL VARIABLES (SEE myshell.h FOR EXPLANATION)
@@ -131,7 +131,7 @@ void search_path_run(char **argv)
 {
     /* Step 2 Search path for the command specified */
     char *path_p = getenv("PATH");
-    const char s[2] = ":"; //seperator
+    const char s[2] = ":"; //separator
     char *token;
     char command_buffer[256]; // Buffer to hold command
 
@@ -145,7 +145,8 @@ void search_path_run(char **argv)
     {
         strcpy(command_buffer, token);
         strcat(command_buffer, command);
-        execv(command_buffer, argv); //if this works, the process image is replaced. execution of loop will stop
+        execv(command_buffer, argv); 
+        //if this works, the process image is replaced. execution of loop will stop
         token = strtok(NULL, s);
     }
 
@@ -181,6 +182,7 @@ void run_shellscript(char **argv)
 {
     /* Step 8 Shell script execution
       To be used only in run_cmd */
+
     int access_status = access(argv[0], R_OK);
     if (access_status != 0) { return; }
     
