@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/param.h>
 #include <signal.h> // For step 9
 
 //  Written by Chris.McDonald@uwa.edu.au, October 2017
@@ -33,7 +34,7 @@
 #define COMMENT_CHAR		'#'	// comment character
 #define HOME_CHAR		'~'	// home directory character
 
-#define MAX_BG_PROCESSES      128 // default array size for storing bg processes (Step 9)
+#define MAX_BG_PROCESSES      128 // default array size for storing background processes (Step 9)
 
 //  ----------------------------------------------------------------------
 
@@ -139,5 +140,6 @@ extern void add_background_processes(pid_t);
 extern void remove_background_processes(pid_t);
 extern void kill_background_processes(void);
 
+// Variables for Step 9
 extern pid_t BACKGROUND_PROCESSES[MAX_BG_PROCESSES];
 extern int   *num_background_processes;

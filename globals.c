@@ -133,7 +133,7 @@ void search_path_run(char **argv)
     char *path_p = getenv("PATH");
     const char s[2] = ":"; //separator
     char *token;
-    char command_buffer[256]; // Buffer to hold command
+    char command_buffer[MAXPATHLEN]; // Buffer to hold command
 
     char *command = calloc(strlen(argv[0])+2, sizeof(char));
     strcat(command, "/"); 

@@ -68,6 +68,7 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
 void execute_semicolon_command(SHELLCMD *t, int *exitstatus)
 {
     /* Step 4 Sequential execution of ';' */
+
 	execute_shellcmd(t->left);
 	if (t->right == NULL){
 		*exitstatus = EXIT_FAILURE; return;
@@ -78,32 +79,33 @@ void execute_semicolon_command(SHELLCMD *t, int *exitstatus)
 void execute_and_command(SHELLCMD *t, int *exitstatus)
 {
     /* Step 4 Sequential execution of '&&' */
+
 	int last_exit;
     last_exit = execute_shellcmd(t->left);
     if (last_exit != EXIT_SUCCESS) {
         *exitstatus = last_exit;
         return;
     }
-
     *exitstatus = execute_shellcmd(t->right);
 }
 
 void execute_or_command(SHELLCMD *t, int *exitstatus)
 {	
     /* Step 4 Sequential execution of '||' */
+
 	int last_exit;
     last_exit = execute_shellcmd(t->left);
     if (last_exit == EXIT_SUCCESS) {
         *exitstatus = last_exit;
         return;
     }
-    
     *exitstatus = execute_shellcmd(t->right);
 }
 
 void execute_subshell_command(SHELLCMD *t, int *exitstatus)
 {
     /* Step 5 Subshell execution */
+
     int last_exit = 0;
     pid_t  pid = fork();
     switch (pid){
@@ -128,6 +130,7 @@ void execute_subshell_command(SHELLCMD *t, int *exitstatus)
 void execute_pipe_command(SHELLCMD *t, int *exitstatus)
 {
     /* Step 7 Pipeline sequential execution */
+
     int pipefd[2];
     int prv_stdout, prv_stdin = 0;
 
@@ -168,6 +171,7 @@ void execute_pipe_command(SHELLCMD *t, int *exitstatus)
 void execute_background_command(SHELLCMD *t, int *exitstatus)
 {
     /* Step 9 Background Execution */
+    
     pid_t  pid = fork();
     switch (pid){
         case 0 :  // Child fork
