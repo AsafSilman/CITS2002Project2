@@ -133,7 +133,7 @@ extern void execute_background_command(SHELLCMD*, int*);
 extern void run_shellscript(char**);
 extern void search_path_run(char**);
 extern void run_cmd(int*, SHELLCMD*);
-extern void execute_infile(SHELLCMD*);
+extern bool execute_infile(SHELLCMD*);
 extern void execute_outfile(SHELLCMD*);
 extern void background_command_handler(int);
 extern void add_background_processes(pid_t);

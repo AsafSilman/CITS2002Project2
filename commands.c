@@ -19,12 +19,14 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
     // INTERNAL COMMANDS
     if(strcmp(t->argv[0], "exit") == 0){
         /* Step 3 internal command 'exit' is called */
+
         printf("\n");
         kill_background_processes();
         exit(EXIT_SUCCESS);
     }
     else if(strcmp(t->argv[0], "cd") == 0){
         /* Step 3 internal command 'cd' is called */
+
         if(t->argc==1) {
             chdir(HOME);
         }
@@ -35,6 +37,7 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
     }
     else if(strcmp(t->argv[0], "time") == 0){
         /* Step 3 internal command 'time' called */
+
         struct timeval  start_time;
         struct timeval  end_time;
         
@@ -51,7 +54,7 @@ void execute_cmd_command(SHELLCMD *t, int *exitstatus)
             (t->argv)--; // increment argv by 1        
             gettimeofday( &end_time, NULL );
 
-            if (*exitstatus == EXIT_SUCCESS){ // 
+            if (*exitstatus == EXIT_SUCCESS){ 
                 int execution_time = end_time.tv_usec - start_time.tv_usec;
                 fprintf(stderr, "%i ms\n", execution_time/1000); // convert to milliseconds
             }
@@ -135,8 +138,9 @@ void execute_pipe_command(SHELLCMD *t, int *exitstatus)
     int prv_stdout, prv_stdin = 0;
 
     if (pipe(pipefd) == -1){
-        perror("pipe"); // PIPE ERROR
-        *exitstatus = EXIT_FAILURE; return;
+        perror("Failed to make pipe"); // PIPE ERROR
+        *exitstatus = EXIT_FAILURE;
+        return;
     }
 
     switch (fork()){
@@ -165,6 +169,7 @@ void execute_pipe_command(SHELLCMD *t, int *exitstatus)
             *exitstatus = execute_shellcmd(t->right); // Run right command + record exit status
 
             dup2(prv_stdin, STDIN_FILENO); //Reset stdin
+            break;
     }
 }
 
@@ -180,10 +185,10 @@ void execute_background_command(SHELLCMD *t, int *exitstatus)
             kill(getppid(), SIGUSR1);
             exit(0);
         case -1 : // Error
-            *exitstatus	= EXIT_FAILURE; return; break;
+            *exitstatus	= EXIT_FAILURE; return;
         default : //Parent
             add_background_processes(pid);
             signal(SIGUSR1, background_command_handler);
-            *exitstatus	= execute_shellcmd(t->right); return; break;
+            *exitstatus	= execute_shellcmd(t->right); return;
     }
 }

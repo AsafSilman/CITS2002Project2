@@ -88,15 +88,19 @@ void print_shellcmd0(SHELLCMD *t)
 }
 
 // ------------------------------------------------------------------------
+// FUNCTIONS CREATED TO MEET PROJECT REQUIREMENTS
 
 void run_cmd(int *exitstatus, SHELLCMD *t)
 {
     /* Step 1 Execute commands */
+
     pid_t  pid = fork();
     switch (pid){
         case 0 : // child process
             if (t->infile != NULL) {
-                execute_infile(t);
+                if(!execute_infile(t)) {
+                    exit(EXIT_FAILURE);
+                };
             }
             
             if (t->outfile != NULL ) {
@@ -115,7 +119,6 @@ void run_cmd(int *exitstatus, SHELLCMD *t)
             // If execv failed, and process image did not change
             fprintf(stderr, "%s is not a valid command\n", t->argv[0]);
             exit(EXIT_FAILURE);
-            break;
         case -1 : //fork failed
             *exitstatus	= EXIT_FAILURE;
             break;
@@ -130,6 +133,7 @@ void run_cmd(int *exitstatus, SHELLCMD *t)
 void search_path_run(char **argv)
 {
     /* Step 2 Search path for the command specified */
+
     char *path_p = getenv("PATH");
     const char s[2] = ":"; //separator
     char *token;
@@ -153,13 +157,19 @@ void search_path_run(char **argv)
     free(command);
 }
 
-void execute_infile(SHELLCMD *t)
+bool execute_infile(SHELLCMD *t)
 {
-    /* Step 6 Redirects standard input to file specified in SHELLCMD */
+    /* Step 6 Redirects standard input to file specified in SHELLCMD 
+       Returns bool because susceptible to failure*/
 
-    int ifd = open(t->infile, O_RDONLY);
+    int ifd = open(t->infile, O_RDONLY);    
+    if (ifd == -1) {
+        perror("File does not exist");
+        return false;
+    }
     dup2(ifd, STDIN_FILENO);
     close(ifd);
+    return true;
 }
 
 void execute_outfile(SHELLCMD *t)
@@ -202,6 +212,7 @@ void background_command_handler(int sig)
 {
     /* Step 9 Background Execution 
        This is the handler function for signal */
+
     pid_t child_id = wait(NULL);
     remove_background_processes(child_id);
     printf("Process ID %d has finished\n", child_id);
@@ -211,6 +222,7 @@ void add_background_processes(pid_t pid)
 {
     /* Step 9 Background Execution
     Function to keep a log of processes */
+
     BACKGROUND_PROCESSES[*num_background_processes] = pid;
     ++*num_background_processes;
 }
@@ -233,6 +245,11 @@ void remove_background_processes(pid_t pid)
 
 void kill_background_processes(void)
 {
+    /* Step 9 Background Execution
+       Used when myshell exits
+       Sends SIGKILL to all background processes 
+       and waits for them to finish */
+
     int num = *num_background_processes;
     for (int i=0; i<num; ++i) {
         kill(BACKGROUND_PROCESSES[i], SIGKILL);
